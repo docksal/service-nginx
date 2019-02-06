@@ -1,0 +1,21 @@
+include includes/upstream.conf;
+
+server {
+    listen 80 default_server;
+    server_name _;
+    root {{ NGINX_SERVER_ROOT }};
+    include includes/preset.conf;
+    include includes/defaults.conf;
+}
+
+server
+{
+    listen 443 default_server ssl;
+    server_name _;
+    root {{ NGINX_SERVER_ROOT }};
+    include includes/preset.conf;
+    include includes/defaults.conf;
+
+    ssl_certificate ssl/server.crt;
+    ssl_certificate_key ssl/server.key;
+}
