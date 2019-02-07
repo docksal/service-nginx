@@ -5,8 +5,8 @@ VERSION ?= 1.15.7
 TAG ?= $(VERSION)
 REPO ?= docksal/nginx
 PORTS = -p 2580:80 -p 25443:443
-VOLUMES = -v `pwd`/tests/docroot:/var/www/docroot -v `pwd`/tests/config:/var/www/.docksal/etc/nginx
-ENV = -e APACHE_BASIC_AUTH_USER=user -e APACHE_BASIC_AUTH_PASS=123
+#VOLUMES = -v `pwd`/tests/docroot:/var/www/docroot -v `pwd`/tests/config:/var/www/.docksal/etc/nginx
+#ENV = -e APACHE_BASIC_AUTH_USER=user -e APACHE_BASIC_AUTH_PASS=123
 
 NAME = docksal-nginx-$(VERSION)
 

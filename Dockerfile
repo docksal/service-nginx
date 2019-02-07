@@ -1,11 +1,11 @@
 ARG VERSION
 FROM nginx:${VERSION}-alpine
 
-ARG VERSION
 ENV NGINX_BACKEND_HOST="cli"
 ENV NGINX_BACKEND_PORT="9000"
 ENV NGINX_VHOST_PRESET="html"
-ENV NGINX_SERVER_ROOT="/usr/share/nginx/html"
+ENV NGINX_SERVER_ROOT="/var/www/docroot"
+#ENV NGINX_SERVER_ROOT="/usr/share/nginx/html"
 
 USER root
 

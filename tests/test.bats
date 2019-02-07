@@ -69,7 +69,7 @@ _healthcheck_wait ()
 
 	### Setup ###
 	docker rm -vf "$NAME" >/dev/null 2>&1 || true
-	docker run --name "$NAME" -d -p 2580:80 -p 25443:443 \
+	docker run --name "$NAME" -d -p 2580:80 -p 25443:443 -e NGINX_SERVER_ROOT="/usr/share/nginx/html" \
 		"$IMAGE"
 	_healthcheck_wait
 
@@ -149,7 +149,7 @@ _healthcheck_wait ()
 	### Setup ###
 	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
 	fin docker run --name "$NAME" -d -p 2580:80 -p 25443:443 \
-		-v $(pwd)/../tests/docroot:/var/www/docroot \
+		-v $(pwd)/tests/docroot:/var/www/docroot \
 		-e APACHE_BASIC_AUTH_USER=user \
 		-e APACHE_BASIC_AUTH_PASS=pass \
 		"$IMAGE" >/dev/null
@@ -159,7 +159,7 @@ _healthcheck_wait ()
 
 	# Check authorization is required
 	run curl -sSk -I http://test.docksal:2580
-	# Apache 2.2 returns "HTTP/1.1 401 Authorization Required" while Apache 2.4 returns "HTTP/1.1 401 Unauthorized"
+	# Apache 2.2 returns "HTTP/1.1 401 Authorization Required" while Apache 2.4 and Nginx returns "HTTP/1.1 401 Unauthorized"
 	if [[ "$NAME" == "docksal-apache-2.2" ]]; then
 		echo "$output" | grep "HTTP/1.1 401 Authorization Required"
 	else
@@ -207,3 +207,4 @@ _healthcheck_wait ()
 	### Cleanup ###
 	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
 }
+

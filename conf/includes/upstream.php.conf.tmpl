@@ -1,0 +1,10 @@
+upstream php
+{
+    server {{ NGINX_BACKEND_HOST }}:{{ NGINX_BACKEND_PORT }};
+}
+
+map $http_x_forwarded_proto $fastcgi_https {
+    default $https;
+    http '';
+    https on;
+}
