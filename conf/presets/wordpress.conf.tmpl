@@ -1,0 +1,10 @@
+location /
+{
+    try_files $uri $uri/ /index.php?q=$uri&$args;
+}
+
+location ~ \.php$
+{
+    fastcgi_pass php;
+    fastcgi_index index.php;
+}
