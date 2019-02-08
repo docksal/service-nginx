@@ -15,8 +15,8 @@ RUN apk add --no-cache openssl bash && mkdir -p /etc/nginx/ssl \
 	&& rm -rf /etc/nginx/conf.d/*
 
 COPY conf /etc/nginx/
-COPY docker-entrypoint.d /docker-entrypoint.d/
-COPY scripts /usr/bin/
+COPY docker-entrypoint.d /etc/docker-entrypoint.d/
+COPY bin /usr/local/bin/
 
 EXPOSE 80 443
 
