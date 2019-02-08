@@ -8,10 +8,10 @@ env:
 
   matrix:
     - VERSION=1.15 TAGS=latest
-    - VERSION=1.14.2 TAGS=1.14
-    - VERSION=1.13.12 TAGS=1.13
-    - VERSION=1.12.2 TAGS=1.12
-    - VERSION=1.11.10 TAGS=1.11
+    - VERSION=1.14
+    - VERSION=1.13
+    - VERSION=1.12
+    - VERSION=1.11
 
 install:
   - curl -fsSL get.docksal.io | bash
