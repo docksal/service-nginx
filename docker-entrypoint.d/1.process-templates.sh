@@ -27,9 +27,6 @@ then
     if [[ "${NGINX_VHOST_PRESET}" =~ ^drupal|wordpress|php$ ]]
     then
         process_template "/etc/nginx/includes/upstream.php.conf.tmpl" "/etc/nginx/includes/upstream.conf"
-    elif [[ "${NGINX_VHOST_PRESET}" == "http-proxy" ]]
-    then
-        process_template "/etc/nginx/includes/upstream.http-proxy.conf.tmpl" "/etc/nginx/includes/upstream.conf"
     fi
 fi
 
