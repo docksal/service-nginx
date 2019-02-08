@@ -10,6 +10,9 @@ USER root
 
 COPY docker-entrypoint-init.d /docker-entrypoint-init.d/
 COPY healthcheck.sh /usr/bin/
+RUN  :>/usr/local/bin/init_volumes
+
+WORKDIR /var/www/docroot
 
 EXPOSE 80
 
