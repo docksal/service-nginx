@@ -7,7 +7,7 @@ env:
     - REPO=docksal/nginx
 
   matrix:
-    - VERSION=1.15.7 TAGS=1.15,latest
+    - VERSION=1.15 TAGS=latest
     - VERSION=1.14.2 TAGS=1.14
     - VERSION=1.13.12 TAGS=1.13
     - VERSION=1.12.2 TAGS=1.12

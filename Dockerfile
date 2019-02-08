@@ -1,29 +1,18 @@
 ARG VERSION
-FROM nginx:${VERSION}-alpine
+FROM wodby/nginx:${VERSION}
 
 ENV NGINX_BACKEND_HOST="cli"
 ENV NGINX_BACKEND_PORT="9000"
 ENV NGINX_VHOST_PRESET="html"
 ENV NGINX_SERVER_ROOT="/var/www/docroot"
-#ENV NGINX_SERVER_ROOT="/usr/share/nginx/html"
+ENV NGINX_ERROR_404_URI="/dev/null"
 
 USER root
 
-RUN apk add --no-cache openssl bash && mkdir -p /etc/nginx/ssl \
-	&& openssl req -batch -x509 -newkey rsa:4096 -days 3650 -nodes -sha256 -subj "/" \
-		-keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt \
-	&& apk del openssl \
-	&& rm -rf /etc/nginx/conf.d/*
+COPY docker-entrypoint-init.d /docker-entrypoint-init.d/
+COPY healthcheck.sh /usr/bin/
 
-COPY conf /etc/nginx/
-COPY docker-entrypoint.d /docker-entrypoint.d/
-COPY scripts /usr/bin/
-
-EXPOSE 80 443
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80
 
 # Health check script
 HEALTHCHECK --interval=5s --timeout=1s --retries=12 CMD ["healthcheck.sh"]

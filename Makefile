@@ -1,6 +1,6 @@
 -include env_make
 
-VERSION ?= 1.15.7
+VERSION ?= 1.15
 
 TAG ?= $(VERSION)
 REPO ?= docksal/nginx

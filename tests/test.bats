@@ -81,13 +81,7 @@ _healthcheck_wait ()
 	run curl -sSk http://test.docksal:2580
 	echo "$output" | grep "Welcome to nginx!"
 
-	run curl -sSk -I https://test.docksal:25443
-	echo "$output" | grep "HTTP/1.1 200 OK"
-
-	run curl -sSk https://test.docksal:25443
-	echo "$output" | grep "Welcome to nginx!"
-
-	run curl -sSk -I http://test.docksal:2580/nonsense
+	run curl -sSk -I http://test.docksal:2580/nonsense.txt
 	echo "$output" | grep "HTTP/1.1 404 Not Found"
 
 
@@ -175,7 +169,32 @@ _healthcheck_wait ()
 	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
 }
 
-@test "Configuration overrides" {
+@test "Index overrides" {
+	[[ $SKIP == 1 ]] && skip
+
+	### Setup ###
+	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
+	fin docker run --name "$NAME" -d -p 2580:80 -p 25443:443 \
+		-v $(pwd)/tests/docroot:/var/www/docroot \
+		-e NGINX_SERVER_ROOT="/var/www/docroot" \
+		-e NGINX_INDEX_FILE="index2.html" \
+		"$IMAGE" >/dev/null
+	_healthcheck_wait
+
+	### Tests ###
+
+	# Test default virtual host config overrides
+	run curl -sSk -I http://test.docksal:2580
+	echo "$output" | grep "HTTP/1.1 200 OK"
+
+	run curl -sSk http://test.docksal:2580
+	echo "$output" | grep "index2.html"
+
+	### Cleanup ###
+	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
+}
+
+@test "Additional virtual host" {
 	[[ $SKIP == 1 ]] && skip
 
 	### Setup ###
@@ -189,20 +208,12 @@ _healthcheck_wait ()
 
 	### Tests ###
 
-	# Test default virtual host config overrides
-	run curl -sSk -I http://test.docksal:2580
-	echo "$output" | grep "HTTP/1.1 200 OK"
-
-	run curl -sSk http://test.docksal:2580
-	echo "$output" | grep "index2.html"
-
 	# Test extra virtual hosts config
 	run curl -sSk -I http://docs.test.docksal:2580
 	echo "$output" | grep "HTTP/1.1 301"
 
 	run curl -sSk -L http://docs.test.docksal:2580
 	echo "$output"| grep "Docksal Documentation"
-
 
 	### Cleanup ###
 	fin docker rm -vf "$NAME" >/dev/null 2>&1 || true
