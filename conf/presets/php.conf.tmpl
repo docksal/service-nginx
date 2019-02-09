@@ -1,4 +1,4 @@
-index index.php;
+index index.php index.html;
 
 location / {
     try_files $uri /index.php?$args;
@@ -6,5 +6,5 @@ location / {
 
 location ~ [^/]\.php(/|$) {
     fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-    fastcgi_pass php;
+    fastcgi_pass php-fpm;
 }

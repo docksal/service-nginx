@@ -1,0 +1,5 @@
+# Upstream settings for PHP-FPM
+upstream php-fpm
+{
+    server {{ getenv "NGINX_BACKEND_HOST" "php-fpm" }}:{{ getenv "NGINX_BACKEND_PORT" "9000" }};
+}

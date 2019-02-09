@@ -1,1 +1,7 @@
-index index.html index.php;
+# Shared default virtual host settings go here
+
+# /.healthz location for status checks
+location ~ ^/\.healthz$ {
+    access_log off;
+    return 204;
+}
