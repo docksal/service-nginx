@@ -19,8 +19,14 @@ ARG GOMPLATE_VERSION=3.0.0
 
 # Install gomplate
 RUN set -xe; \
-	wget -q https://github.com/hairyhenderson/gomplate/releases/download/v${GOMPLATE_VERSION}/gomplate_linux-amd64-slim -O /usr/local/bin/gomplate; \
-	chmod +x /usr/local/bin/gomplate
+	apk add --no-cache -t .fetch-deps \
+		curl \
+	; \
+	curl -sSL https://github.com/hairyhenderson/gomplate/releases/download/v${GOMPLATE_VERSION}/gomplate_linux-amd64-slim -o /usr/local/bin/gomplate; \
+	chmod +x /usr/local/bin/gomplate; \
+	\
+	apk del --purge .fetch-deps; \
+	rm -rf /var/cache/apk/*
 
 COPY conf /etc/nginx/
 COPY docker-entrypoint.d /etc/docker-entrypoint.d/
