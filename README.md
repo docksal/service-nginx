@@ -1,63 +1,76 @@
 # Nginx Docker images for Docksal
 
+Nginx images based on the official Nginx images from Docker Hun (alpine flavor) with extra features. 
+
 This image(s) is part of the [Docksal](http://docksal.io) image library.
 
 ## Versions
 
-- 1.15.7 (based on nginx:1.15.7-alpine)
-- 1.14.2 (based on nginx:1.14.2-alpine)
-- 1.13.12 (based on nginx:1.13.12-alpine)
-- 1.12.2 (based on nginx:1.12.2-alpine)
-- 1.11.10 (based on nginx:1.11.10-alpine)
+- docksal/nginx:1.15
+- docksal/nginx:1.14
+- docksal/nginx:1.13
+- docksal/nginx:1.12
+- docksal/nginx:1.11
 
-## Features
+## Extra features
 
 - SSL enabled (self-signed cert)
 - HTTP Basic Authentication
-- Support for configuration overrides
-- Support presets (html/drupal/wordpress)
+- Configuration presets (`html`, `php`, `drupal`, `wordpress`)
+- User configuration overrides
 
 ## Document root
 
-Apache `DocumentRoot` for the default virtual host can be set via `APACHE_DOCUMENTROOT`environment variable 
-(defaults to `/var/www/docroot`). 
+Nginx server `root` can be set via `NGINX_SERVER_ROOT` environment variable (defaults to `/var/www/docroot`). 
 
 ## FastCGI server endpoint
 
 These images are set up to work with a FastCGI server and will not start without one.  
-The FastCGI endpoint can be set via `APACHE_FCGI_HOST_PORT` environment variable (defaults to `cli:9000`).
+The FastCGI endpoint can be set via `NGINX_FCGI_HOST_PORT` environment variable (defaults to `php-fpm:9000`).
 
 ## HTTP Basic Authentication
 
-Use `APACHE_BASIC_AUTH_USER` and `APACHE_BASIC_AUTH_PASS` environment variables to set username and password.
+Use `NGINX_BASIC_AUTH_USER` and `NGINX_BASIC_AUTH_PASS` environment variables to set username and password.
 
 Example with Docker Compose
 
 ```yaml
   ...
   environment:
-    - APACHE_BASIC_AUTH_USER=user
-    - APACHE_BASIC_AUTH_PASS=password
+    - NGINX_BASIC_AUTH_USER=user
+    - NGINX_BASIC_AUTH_PASS=password
   ...
 ```
+
+## Configuration presets
+
+Configuration presets can be set using the `NGINX_VHOST_PRESET` environment variable (defaults to `html`).
+
+Available options:
+
+- `NGINX_VHOST_PRESET=html` - basic HTML site
+- `NGINX_VHOST_PRESET=php` - generic PHP application
+- `NGINX_VHOST_PRESET=drupal` - Drupal 7/8
+- `NGINX_VHOST_PRESET=wordpress` - WordPress
 
 ## Configuration overrides
 
 Configuration overrides can be added to a Docksal project codebase.
 
-Use `.docksal/etc/apache/httpd-vhost-overrides.conf` to override the default virtual host configuration:
+Use `.docksal/etc/nginx/vhost-overrides.conf` to override the default virtual host configuration, e.g.:
 
-```apacheconfig
-DirectoryIndex index2.html
+```
+index index2.html;
 ```
 
-Use `.docksal/etc/apache/httpd-vhosts.conf` to define additional virtual hosts:
+Use `.docksal/etc/nginx/vhosts.conf` to define additional virtual hosts, e.g.:
 
-```apacheconfig
-<VirtualHost *:80>
-	ServerName docs.test.docksal
-
-	ProxyPass / http://docs.docksal.io/
-	ProxyPassReverse / http://docs.docksal.io/
-</VirtualHost>
+```
+server
+{
+    listen 80;
+    server_name test3.docksal;
+    root /var/www/docroot;
+    index index3.html;
+}
 ```
