@@ -26,7 +26,7 @@ COPY conf /etc/nginx/
 COPY docker-entrypoint.d /etc/docker-entrypoint.d/
 COPY bin /usr/local/bin/
 
-ENV NGINX_FCGI_HOST_PORT="cli:9000"
+ENV NGINX_FCGI_HOST_PORT="php-fpm:9000"
 ENV NGINX_SERVER_ROOT="/var/www/docroot"
 ENV NGINX_VHOST_PRESET="html"
 
