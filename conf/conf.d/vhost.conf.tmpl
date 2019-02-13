@@ -1,0 +1,25 @@
+include includes/upstream.conf;
+
+# HTTP
+server {
+    listen 80 default_server;
+    server_name _;
+    root {{ getenv "NGINX_SERVER_ROOT" "/var/www/docroot" }};
+
+    include includes/defaults.conf;
+    include includes/preset.conf;
+}
+
+# HTTPS
+# TODO: Drop this? HTTPS termination should happen at the reverse proxy and this is not used anyway.
+server {
+    listen 443 default_server ssl;
+    server_name _;
+    root {{ getenv "NGINX_SERVER_ROOT" "/var/www/docroot" }};
+
+    ssl_certificate ssl/server.crt;
+    ssl_certificate_key ssl/server.key;
+
+    include includes/defaults.conf;
+    include includes/preset.conf;
+}

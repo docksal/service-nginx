@@ -1,0 +1,5 @@
+# Upstream settings for PHP-FPM
+upstream php-fpm
+{
+    server {{ getenv "NGINX_FCGI_HOST_PORT" "php-fpm:9000" }};
+}
