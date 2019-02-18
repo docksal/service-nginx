@@ -11,7 +11,6 @@ echo_debug ()
 	if [[ "$DEBUG" != 0 ]]; then echo -e "$(date +"%F %H:%M:%S") | $@"; fi
 }
 
-
 # Execute available init scripts
 # This can be used by child images to run additional provisioning scripts at startup
 ls /etc/docker-entrypoint.d/ > /dev/null
