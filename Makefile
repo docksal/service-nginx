@@ -3,7 +3,7 @@
 FROM ?= nginx:1.15.7-alpine
 VERSION ?= 1.15
 
-TAG ?= $(VERSION)
+BUILD_TAG ?= $(VERSION)
 SOFTWARE_VERSION ?= $(VERSION)
 
 REPO ?= docksal/nginx
@@ -14,22 +14,22 @@ NAME ?= docksal-nginx-$(VERSION)
 .PHONY: build test push shell run start stop logs clean release
 
 build:
-	docker build -t $(REPO):$(TAG) --build-arg FROM=$(FROM) .
+	docker build -t $(REPO):$(BUILD_TAG) --build-arg FROM=$(FROM) .
 
 test:
 	tests/test.bats
 
 push:
-	docker push $(REPO):$(TAG)
+	docker push $(REPO):$(BUILD_TAG)
 
 shell: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG) /bin/bash -li
+	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG) /bin/bash -li
 
 run: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG)
+	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
 
 start: clean
-	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG)
+	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
 
 exec:
 	docker exec $(NAME) /bin/bash -c "$(CMD)"
