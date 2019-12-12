@@ -2,36 +2,34 @@
 
 FROM ?= nginx:1.15.7-alpine
 VERSION ?= 1.15
-TAG ?= $(VERSION)
+
+BUILD_TAG ?= $(VERSION)
+SOFTWARE_VERSION ?= $(VERSION)
 
 REPO ?= docksal/nginx
 NAME ?= docksal-nginx-$(VERSION)
 
-ifneq ($(STABILITY_TAG),)
-	ifneq ($(TAG),latest)
-		override TAG := $(TAG)-$(STABILITY_TAG)
-	endif
-endif
+.EXPORT_ALL_VARIABLES:
 
 .PHONY: build test push shell run start stop logs clean release
 
 build:
-	docker build -t $(REPO):$(TAG) --build-arg FROM=$(FROM) --build-arg VERSION=$(VERSION) .
+	docker build -t $(REPO):$(BUILD_TAG) --build-arg FROM=$(FROM) .
 
 test:
-	IMAGE=$(REPO):$(TAG) REPO=$(REPO) NAME=$(NAME) VERSION=$(VERSION) tests/test.bats
+	tests/test.bats
 
 push:
-	docker push $(REPO):$(TAG)
+	docker push $(REPO):$(BUILD_TAG)
 
 shell: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG) /bin/bash -li
+	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG) /bin/bash -li
 
 run: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG)
+	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
 
 start: clean
-	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(TAG)
+	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
 
 exec:
 	docker exec $(NAME) /bin/bash -c "$(CMD)"
@@ -48,6 +46,7 @@ logs:
 clean:
 	docker rm -f $(NAME) >/dev/null 2>&1 || true
 
-release: build push
+release:
+	@scripts/docker-push.sh
 
 default: build
