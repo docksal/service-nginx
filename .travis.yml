@@ -5,6 +5,7 @@ language: minimal
 env:
   global:
     - REPO=docksal/nginx
+    - LATEST_VERSION=1.15
 
   matrix:
     - VERSION=1.15 FROM=nginx:1.15.7-alpine
