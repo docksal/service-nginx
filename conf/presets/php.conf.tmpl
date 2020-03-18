@@ -6,5 +6,12 @@ location / {
 
 location ~ [^/]\.php(/|$) {
     fastcgi_split_path_info ^(.+?\.php)(/.*)$;
-    fastcgi_pass php-fpm;
+    set $endpoint php-fpm;
+    {{ if eq (getenv "XDEBUG_ENABLED") "1" }}
+    if ($cookie_XDEBUG_SESSION != "")
+    {
+        set $endpoint xdebug-php-fpm;
+    }
+    {{ end }}
+    fastcgi_pass $endpoint;
 }

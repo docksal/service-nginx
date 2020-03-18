@@ -3,3 +3,9 @@ upstream php-fpm
 {
     server {{ getenv "NGINX_FCGI_HOST_PORT" "php-fpm:9000" }};
 }
+{{ if eq (getenv "XDEBUG_ENABLED") "1" }}
+upstream xdebug-php-fpm
+{
+    server xdebug-{{ getenv "NGINX_FCGI_HOST_PORT" "php-fpm:9000" }};
+}
+{{ end }}

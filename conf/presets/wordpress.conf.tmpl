@@ -27,7 +27,14 @@ location ~ \.php$ {
     fastcgi_param PATH_INFO $fastcgi_path_info;
     fastcgi_param QUERY_STRING $query_string;
     fastcgi_intercept_errors on;
-    fastcgi_pass php-fpm;
+    set $endpoint php-fpm;
+    {{ if eq (getenv "XDEBUG_ENABLED") "1" }}
+    if ($cookie_XDEBUG_SESSION != "")
+    {
+        set $endpoint xdebug-php-fpm;
+    }
+    {{ end }}
+    fastcgi_pass $endpoint;
 
     # Buffers
     fastcgi_buffers 16 32k;
