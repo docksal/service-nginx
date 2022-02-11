@@ -8,7 +8,10 @@ ARG TARGETARCH
 # TODO: Drop this? HTTPS termination should happen at the reverse proxy and this is not used anyway.
 # Generate a self-signed cert
 RUN set -xe; \
-	apk add --update --no-cache openssl bash; \
+	apk add --update --no-cache \
+		bash \
+		openssl \
+	; \
 	mkdir -p /etc/nginx/ssl; \
 	openssl req -batch -x509 -newkey rsa:4096 -days 3650 -nodes -sha256 -subj "/" \
 		-keyout /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt; \
