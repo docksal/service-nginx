@@ -6,11 +6,8 @@ This image(s) is part of the [Docksal](http://docksal.io) image library.
 
 ## Versions
 
-- docksal/nginx:1.15
-- docksal/nginx:1.14
-- docksal/nginx:1.13
-- docksal/nginx:1.12
-- docksal/nginx:1.11
+- docksal/nginx:1.20
+- docksal/nginx:1.21
 
 ## Extra features
 
@@ -50,7 +47,7 @@ Available options:
 
 - `NGINX_VHOST_PRESET=html` - basic HTML site
 - `NGINX_VHOST_PRESET=php` - generic PHP application
-- `NGINX_VHOST_PRESET=drupal` - Drupal 7/8
+- `NGINX_VHOST_PRESET=drupal` - Drupal
 - `NGINX_VHOST_PRESET=wordpress` - WordPress
 
 ## Configuration overrides
@@ -69,7 +66,7 @@ Use `.docksal/etc/nginx/vhosts.conf` to define additional virtual hosts, e.g.:
 server
 {
     listen 80;
-    server_name test3.docksal;
+    server_name test3.docksal.site;
     root /var/www/docroot;
     index index3.html;
 }
