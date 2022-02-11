@@ -1,52 +1,62 @@
+# Load test variables
 -include tests/env_make
 
-FROM ?= nginx:1.21.5-alpine
+# Allow using a different docker binary
+DOCKER ?= docker
+
+# Force BuildKit mode for builds
+# See https://docs.docker.com/buildx/working-with-buildx/
+DOCKER_BUILDKIT=1
+
+IMAGE ?= docksal/nginx
 VERSION ?= 1.21
+UPSTREAM_IMAGE ?= nginx:1.21-alpine
+BUILD_IMAGE_TAG ?= $(IMAGE):$(VERSION)-build
+NAME = docksal-nginx-$(VERSION)
 
-BUILD_TAG ?= $(VERSION)
-SOFTWARE_VERSION ?= $(VERSION)
-
-REPO ?= docksal/nginx
-NAME ?= docksal-nginx-$(VERSION)
+# Make it possible to pass arguments to Makefile from command line
+# https://stackoverflow.com/a/6273809/1826109
+ARGS = $(filter-out $@,$(MAKECMDGOALS))
 
 .EXPORT_ALL_VARIABLES:
 
-.PHONY: build test push shell run start stop logs clean release
-
-build:
-	docker build -t $(REPO):$(BUILD_TAG) --build-arg FROM=$(FROM) .
-
-test:
-	tests/test.bats
-
-push:
-	docker push $(REPO):$(BUILD_TAG)
-
-shell: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG) /bin/bash -li
-
-run: clean
-	docker run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
-
-start: clean
-	docker run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(REPO):$(BUILD_TAG)
-
-exec:
-	docker exec $(NAME) /bin/bash -c "$(CMD)"
-
-exec-it:
-	docker exec -it $(NAME) /bin/bash -lic "$(CMD)"
-
-stop:
-	docker stop $(NAME)
-
-logs:
-	docker logs $(NAME)
-
-clean:
-	docker rm -f $(NAME) >/dev/null 2>&1 || true
-
-release:
-	@scripts/docker-push.sh
+.PHONY: build test push shell run start stop logs clean
 
 default: build
+
+build:
+	$(DOCKER) build -t $(BUILD_IMAGE_TAG) --build-arg UPSTREAM_IMAGE=$(UPSTREAM_IMAGE) --build-arg VERSION=$(VERSION) .
+
+test:
+	IMAGE=$(BUILD_IMAGE_TAG) NAME=$(NAME) VERSION=$(VERSION) ./tests/test.bats
+
+push:
+	$(DOCKER) push $(BUILD_IMAGE_TAG)
+
+shell: clean
+	$(DOCKER) run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(BUILD_IMAGE_TAG) /bin/bash
+
+run: clean
+	$(DOCKER) run --rm --name $(NAME) -it $(PORTS) $(VOLUMES) $(ENV) $(BUILD_IMAGE_TAG)
+
+start: clean
+	$(DOCKER) run -d --name $(NAME) $(PORTS) $(VOLUMES) $(ENV) $(BUILD_IMAGE_TAG)
+
+stop:
+	$(DOCKER) stop $(NAME)
+
+logs:
+	$(DOCKER) logs $(NAME)
+
+logs-follow:
+	$(DOCKER) logs -f $(NAME)
+
+debug: build start logs-follow
+
+clean:
+	$(DOCKER) rm -vf $(NAME) || true
+
+# Make it possible to pass arguments to Makefile from command line
+# https://stackoverflow.com/a/6273809/1826109
+%:
+	@:
