@@ -47,7 +47,7 @@ location / {
 }
 
 location @rewrite {
-    rewrite ^/(.*)$ /index.php?q=$1;
+    rewrite ^ /index.php;
 }
 
 # Don't allow direct access to PHP files in the vendor directory.
