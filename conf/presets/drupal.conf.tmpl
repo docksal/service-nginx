@@ -89,10 +89,9 @@ location ~ '\.php$|^/update.php' {
     fastcgi_keep_conn on;
 }
 
-# Fighting with Styles? This little gem is amazing.
-# location ~ ^/sites/.*/files/imagecache/ { # For Drupal <= 6
-location ~ ^/sites/.*/files/styles/ { # For Drupal >= 7
-    try_files $uri @rewrite;
+# Passes image style and asset generation to PHP.
+location ~ ^/sites/.*/files/(css|js|styles)/ {
+  try_files $uri @rewrite;
 }
 
 # Handle private files through Drupal. Private file's path can come
